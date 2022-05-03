@@ -1,8 +1,10 @@
+import Home from './components/Home'
+
 function App () {
   return (
-    <>
-      <h1 class='text-4xl font-bold'>Hello world!</h1>
-    </>
+    <main className='min-h-screen py-12 px-24'>
+      <Home />
+    </main>
   )
 }
 

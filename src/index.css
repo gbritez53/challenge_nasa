@@ -1,3 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background: #1c1235;
+  background: linear-gradient(to right, #1c1235 10%, #000 90%);
+  color: rgb(241, 241, 241);
+}
+
+.title-font {
+  font-family: 'Rubik Moonrocks', cursive;
+  font-size: 64px;
+  text-align: center;
+  color: rgb(116, 48, 48);
+  margin-bottom: 20px;
+
+  text-shadow: 0 0 5px rgb(243, 166, 166), 0 0 10px #fff, 0 0 15px #fff,
+    0 0 20px chocolate, 0 0 30px chocolate, 0 0 40px chocolate,
+    0 0 55px chocolate, 0 0 75px chocolate;
+}
+
+.spinnerContainer {
+  width: calc(100% - 20px);
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
