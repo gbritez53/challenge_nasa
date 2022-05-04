@@ -1,35 +1,54 @@
 import { useState, useEffect } from 'react'
 import Select from 'react-select'
-import { optionsRovers, customStyles } from '../constants'
-import { getNasaPhotos } from '../service/getNasaPhotos'
-
-const styles = {
-  formContainer: `grid grid-cols-1 lg:grid-cols-4 gap-10`,
-  selectContainer: `bg-zinc-800 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer border-b-2 border-purple-700 w-full `,
-  labelText: `text-2xl italic font-semibold`,
-  btnSubmit: `bg-[#7e22ced1] text-white py-2 px-4 rounded cursor-pointer hover:bg-purple-600/95 w-full`,
-  column_1: `space-y-8`,
-  column_2: `col-span-3`,
-  contentTitle: `text-2xl italic`,
-  inputSol: `bg-transparent border-b border-white w-full focus:outline-none text-center text-xl`
-}
+import { optionsRovers, customStyles, styles } from '../constants'
+import { getNasaPhotos, getNasaManifest } from '../service/fetchNasaData'
 
 const SelectRover = () => {
-  // useEffect(() => {
-  //   getNasaPhotos(selectedRover, page, sol)
-  // }, [selectedRover, page, sol])
   const [marsPhotos, setMarsPhotos] = useState([])
-  const [selectedRover, setSelectedRover] = useState('')
+  const [selectedRover, setSelectedRover] = useState('curiosity')
+  const [manifest, setManifest] = useState({})
   const [camera, setCamera] = useState([])
   const [filteredCamera, setFilteredCamera] = useState([])
   const [page, setPage] = useState(1)
   const [sol, setSol] = useState(1)
+  const [arrx, setArr] = useState({})
+
+  useEffect(() => {
+    setFilteredCamera(arrx)
+  }, [arrx])
+
+  useEffect(() => {
+    Promise.allSettled([
+      getNasaManifest(selectedRover),
+      getNasaPhotos(selectedRover, page, sol)
+    ]).then(data => {
+      const [
+        {
+          value: { photo_manifest: manifest }
+        },
+        { value: photos }
+      ] = data
+      setManifest(manifest)
+      setMarsPhotos(photos)
+      if (manifest.photos?.length > 0) {
+        const cameras = manifest?.photos.filter(photo => photo.sol === sol)
+        if (cameras[0] !== undefined) {
+          setCamera(cameras[0].cameras)
+        }
+      }
+    })
+  }, [selectedRover, page, sol])
 
   const handleSubmit = e => {
     e.preventDefault()
+    getNasaManifest(selectedRover)
     getNasaPhotos(selectedRover, page, sol)
-    console.log(selectedRover)
   }
+
+  const optionsCameras = camera?.map(cam => ({
+    value: cam,
+    label: cam
+  }))
 
   return (
     <>
@@ -42,6 +61,7 @@ const SelectRover = () => {
             <Select
               options={optionsRovers}
               styles={customStyles}
+              defaultValue={optionsRovers[0]}
               onChange={e => {
                 setSelectedRover(e.value)
                 setPage(1)
@@ -55,8 +75,12 @@ const SelectRover = () => {
               className='filteredCamera'
               closeMenuOnSelect={false}
               isMulti
-              options={optionsRovers}
+              options={optionsCameras}
               styles={customStyles}
+              onChange={e => {
+                setArr(e)
+                setPage(1)
+              }}
             ></Select>
           </div>
 
@@ -67,6 +91,8 @@ const SelectRover = () => {
               className={styles.inputSol}
               value={sol}
               onChange={e => setSol(e.target.value)}
+              min='1'
+              max={manifest.max_sol}
             />
           </div>
 
