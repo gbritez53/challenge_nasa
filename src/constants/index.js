@@ -1,65 +1,44 @@
 // -------------------- SELECT OPTIONS --------------------
-export const selectOptions = [
-  {
-    key: 'Curiosity'
-  },
-  {
-    key: 'Opportunity'
-  },
-  {
-    key: 'Spirit'
-  }
+export const optionsRovers = [
+  { value: 'curiosity', label: 'Curiosity' },
+  { value: 'opportunity', label: 'Opportunity' },
+  { value: 'spirit', label: 'Spirit' }
 ]
 
 export const multiselectOptions = [
-  'Option 1',
-  'Option 2',
-  'Option 3',
-  'Option 4'
+  'FHAZ',
+  'RHAZ',
+  'MAST',
+  'CHEMCAM',
+  'MAHLI',
+  'MARDI',
+  'NAVCAM',
+  'PANCAM',
+  'MINITES'
 ]
 
 // -------------------- STYLES --------------------
-export const selectStyle = {
-  multiselectContainer: {
+export const customStyles = {
+  option: (provided, state) => ({
+    ...provided,
+    color: 'black',
+    padding: 8
+  }),
+  control: () => ({
     color: 'white',
-    background: 'rgb(39 39 42)',
-    'border-radius': '0.25rem'
-  },
-  searchBox: {
-    border: 'none',
-    'border-bottom': '2px solid rgb(126 34 206)',
-    'border-radius': '0.25rem',
-    'font-size': '18px'
-  },
-  inputField: {
-    padding: '2px 16px'
-  },
-  optionContainer: {
-    background: 'rgb(39 39 42)',
-    border: 'none'
-  }
-}
-
-export const multiselectStyle = {
-  chips: {
-    background: 'rgb(126 34 206)'
-  },
-  multiselectContainer: {
-    color: 'white',
-    background: 'rgb(39 39 42)',
-    'border-radius': '0.25rem'
-  },
-  searchBox: {
-    border: 'none',
-    'border-bottom': '2px solid rgb(126 34 206)',
-    'border-radius': '0.25rem',
-    'font-size': '18px'
-  },
-  inputField: {
-    padding: '2px 16px'
-  },
-  optionContainer: {
-    background: 'rgb(39 39 42)',
-    border: 'none'
-  }
+    background: '#27272a',
+    borderBottom: '2px solid rgb(126 34 206)',
+    borderRadius: '0.25rem',
+    display: 'flex',
+    cursor: 'pointer'
+  }),
+  menu: () => ({
+    background: '#27272a',
+    borderRadius: '0.25rem',
+    marginTop: 5,
+    overflow: 'hidden'
+  }),
+  menuList: () => ({
+    background: '#27272a'
+  })
 }
