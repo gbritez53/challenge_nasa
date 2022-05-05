@@ -5,6 +5,19 @@ export const optionsRovers = [
   { value: 'spirit', label: 'Spirit' }
 ]
 
+export const cameras = [
+  'FHAZ',
+  'RHAZ',
+  'MAST',
+  'CHEMCAM',
+  'MAHLI',
+  'MARDI',
+  'NAVCAM',
+  'PANCAM',
+  'MINITES',
+  'ENTRY'
+]
+
 // -------------------- STYLES --------------------
 export const styles = {
   formContainer: `grid grid-cols-1 lg:grid-cols-4 gap-10`,
@@ -13,7 +26,6 @@ export const styles = {
   btnSubmit: `bg-[#7e22ced1] text-white py-2 px-4 rounded cursor-pointer hover:bg-purple-600/95 w-full`,
   column_1: `space-y-8`,
   column_2: `col-span-3`,
-  contentTitle: `text-2xl italic`,
   inputSol: `bg-transparent border-b border-white w-full focus:outline-none text-center text-xl`
 }
 

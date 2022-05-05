@@ -9,7 +9,7 @@ export const getNasaPhotos = async (selectedRover, page, sol) => {
     const { data } = await axios.get(url)
     return data
   } catch (err) {
-    console.error('Error fetching data: ', err)
+    console.error('Error fetching data: ', err.message)
   }
 }
 
@@ -22,6 +22,6 @@ export const getNasaManifest = async rover => {
     const { data } = await axios.get(url)
     return data
   } catch (err) {
-    console.error('Error fetching data: ', err)
+    console.error('Error fetching data: ', err.message)
   }
 }

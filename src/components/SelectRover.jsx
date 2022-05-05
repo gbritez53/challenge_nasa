@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react'
-import Select from 'react-select'
+import { useNasaContext } from '../context/NasaContext'
 import { optionsRovers, customStyles, styles } from '../constants'
 import { getNasaPhotos, getNasaManifest } from '../service/fetchNasaData'
 
+import Select from 'react-select'
+import Spinner from './Spinner'
+import CardList from './CardList'
+
 const SelectRover = () => {
+  const { loading, setLoading } = useNasaContext()
+  const [data, setData] = useState(null)
+  const [error, setError] = useState(null)
   const [marsPhotos, setMarsPhotos] = useState([])
   const [selectedRover, setSelectedRover] = useState('curiosity')
   const [manifest, setManifest] = useState({})
@@ -11,11 +18,12 @@ const SelectRover = () => {
   const [filteredCamera, setFilteredCamera] = useState([])
   const [page, setPage] = useState(1)
   const [sol, setSol] = useState(1)
-  const [arrx, setArr] = useState({})
+
+  const [arr, setArr] = useState({})
 
   useEffect(() => {
-    setFilteredCamera(arrx)
-  }, [arrx])
+    setFilteredCamera(arr)
+  }, [arr])
 
   useEffect(() => {
     Promise.allSettled([
@@ -39,10 +47,31 @@ const SelectRover = () => {
     })
   }, [selectedRover, page, sol])
 
+  const getPhotos = async () => {
+    try {
+      const response = await getNasaPhotos(selectedRover, page, sol)
+      if (!response.ok) {
+        throw new Error(
+          `This is an HTTP error: The status is ${response.status}`
+        )
+      }
+      let actualData = await response.json()
+      setData(actualData)
+      setError(null)
+    } catch (err) {
+      setError(err.message)
+      setData(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleSubmit = e => {
     e.preventDefault()
     getNasaManifest(selectedRover)
     getNasaPhotos(selectedRover, page, sol)
+    setLoading(true)
+    getPhotos()
   }
 
   const optionsCameras = camera?.map(cam => ({
@@ -99,13 +128,21 @@ const SelectRover = () => {
           <input
             type='submit'
             value='Search API'
-            name='j'
             className={styles.btnSubmit}
           />
         </div>
-        <div className={styles.column_2}>
-          <h2 className={styles.contentTitle}>Nothing here...</h2>
-        </div>
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div className={styles.column_2}>
+            <CardList
+              marsPhotos={marsPhotos}
+              filteredCamera={filteredCamera}
+              page={page}
+              sol={sol}
+            />
+          </div>
+        )}
       </form>
     </>
   )
