@@ -11,6 +11,18 @@ body {
   color: rgb(241, 241, 241);
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7e22ced1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7e22ced1;
+}
+
 .title-font {
   font-family: 'Rubik Moonrocks', cursive;
   font-size: 64px;
@@ -21,13 +33,6 @@ body {
   text-shadow: 0 0 5px rgb(243, 166, 166), 0 0 10px #fff, 0 0 15px #fff,
     0 0 20px chocolate, 0 0 30px chocolate, 0 0 40px chocolate,
     0 0 55px chocolate, 0 0 75px chocolate;
-}
-
-.spinnerContainer {
-  width: calc(100% - 20px);
-  display: flex;
-  justify-content: center;
-  padding: 20px;
 }
 
 /* react-select-classes */

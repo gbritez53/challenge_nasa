@@ -4,40 +4,44 @@ import { optionsRovers, customStyles, styles } from '../constants'
 import { getNasaPhotos, getNasaManifest } from '../service/fetchNasaData'
 
 import Select from 'react-select'
-import Spinner from './Spinner'
 import CardList from './CardList'
 
-const SelectRover = () => {
-  const { loading, setLoading } = useNasaContext()
-  const [data, setData] = useState(null)
-  const [error, setError] = useState(null)
-  const [marsPhotos, setMarsPhotos] = useState([])
-  const [selectedRover, setSelectedRover] = useState('curiosity')
-  const [manifest, setManifest] = useState({})
-  const [camera, setCamera] = useState([])
-  const [filteredCamera, setFilteredCamera] = useState([])
-  const [page, setPage] = useState(1)
-  const [sol, setSol] = useState(1)
+const SelectInfo = () => {
+  const {
+    data,
+    setData,
+    setLoading,
+    marsPhotos,
+    selectedRover,
+    setSelectedRover,
+    manifest,
+    setManifest,
+    camera,
+    setCamera,
+    setFilteredCamera,
+    page,
+    setPage,
+    sol,
+    setSol,
+    earthDay,
+    setEarthDay
+  } = useNasaContext()
 
-  const [arr, setArr] = useState({})
+  const [error, setError] = useState(null)
+  const [arr, setArr] = useState([])
 
   useEffect(() => {
     setFilteredCamera(arr)
   }, [arr])
 
   useEffect(() => {
-    Promise.allSettled([
-      getNasaManifest(selectedRover),
-      getNasaPhotos(selectedRover, page, sol)
-    ]).then(data => {
+    Promise.allSettled([getNasaManifest(selectedRover)]).then(data => {
       const [
         {
           value: { photo_manifest: manifest }
-        },
-        { value: photos }
+        }
       ] = data
       setManifest(manifest)
-      setMarsPhotos(photos)
       if (manifest.photos?.length > 0) {
         const cameras = manifest?.photos.filter(photo => photo.sol === sol)
         if (cameras[0] !== undefined) {
@@ -49,14 +53,8 @@ const SelectRover = () => {
 
   const getPhotos = async () => {
     try {
-      const response = await getNasaPhotos(selectedRover, page, sol)
-      if (!response.ok) {
-        throw new Error(
-          `This is an HTTP error: The status is ${response.status}`
-        )
-      }
-      let actualData = await response.json()
-      setData(actualData)
+      const { photos } = await getNasaPhotos(selectedRover, page, sol, earthDay)
+      setData(photos)
       setError(null)
     } catch (err) {
       setError(err.message)
@@ -68,14 +66,12 @@ const SelectRover = () => {
 
   const handleSubmit = e => {
     e.preventDefault()
-    getNasaManifest(selectedRover)
-    getNasaPhotos(selectedRover, page, sol)
-    setLoading(true)
     getPhotos()
+    setLoading(true)
   }
 
   const optionsCameras = camera?.map(cam => ({
-    value: cam,
+    value: cam.toLowerCase(),
     label: cam
   }))
 
@@ -101,7 +97,6 @@ const SelectRover = () => {
           <div>
             <label className={styles.labelText}>Select a Camera:</label>
             <Select
-              className='filteredCamera'
               closeMenuOnSelect={false}
               isMulti
               options={optionsCameras}
@@ -114,7 +109,7 @@ const SelectRover = () => {
           </div>
 
           <div className='flex'>
-            <label className={`mr-3 ${styles.labelText}`}>Sol:</label>
+            <label className={styles.labelTextSol}>Sol:</label>
             <input
               type='number'
               className={styles.inputSol}
@@ -124,28 +119,32 @@ const SelectRover = () => {
               max={manifest.max_sol}
             />
           </div>
+          <div className='flex'>
+            <label className={styles.labelTextDay}>Earth Day:</label>
+            <input
+              type='date'
+              className={styles.inputSol}
+              value={earthDay}
+              onChange={e => setEarthDay(e.target.value)}
+            />
+          </div>
 
           <input
             type='submit'
-            value='Search API'
+            value='Search Photos'
             className={styles.btnSubmit}
           />
         </div>
-        {loading ? (
-          <Spinner />
-        ) : (
-          <div className={styles.column_2}>
-            <CardList
-              marsPhotos={marsPhotos}
-              filteredCamera={filteredCamera}
-              page={page}
-              sol={sol}
-            />
-          </div>
-        )}
+
+        <div className={styles.column_2}>
+          <CardList />
+        </div>
       </form>
+      {error && (
+        <div className='text-[#f3a6a6]'>{`There is a problem fetching the post data - ${error}`}</div>
+      )}
     </>
   )
 }
 
-export default SelectRover
+export default SelectInfo
